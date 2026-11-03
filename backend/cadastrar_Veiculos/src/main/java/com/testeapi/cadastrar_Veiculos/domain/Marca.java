@@ -1,7 +1,12 @@
 package com.testeapi.cadastrar_Veiculos.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
+@AllArgsConstructor
 public enum Marca {
     CHEVROLET("Chevrolet"),
     VOLKSWAGEN("Volkswagen"),
@@ -16,16 +21,8 @@ public enum Marca {
 
     private final String nomeExibicao;
 
-    Marca(String nomeExibicao) {
-        this.nomeExibicao = nomeExibicao;
-    }
-
-    public String getNomeExibicao() {
-        return nomeExibicao;
-    }
-
     public static Marca converterDeTexto(String texto) {
-        if (texto == null || texto.trim().isEmpty()) {
+        if (texto == null || texto.isBlank()) {
             throw new IllegalArgumentException("A marca não pode ser vazia.");
         }
 
