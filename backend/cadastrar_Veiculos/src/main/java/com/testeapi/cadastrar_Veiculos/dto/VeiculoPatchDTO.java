@@ -1,6 +1,6 @@
 package com.testeapi.cadastrar_Veiculos.dto;
 import lombok.*;
-public class veiculoPatchDto {
+public class VeiculoPatchDTO {
 
 
 

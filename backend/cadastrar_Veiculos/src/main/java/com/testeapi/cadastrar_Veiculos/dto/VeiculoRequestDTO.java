@@ -25,4 +25,3 @@ import lombok.*;
 
         private Boolean vendido;
     }
-}

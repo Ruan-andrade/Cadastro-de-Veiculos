@@ -1,3 +1,4 @@
+package com.testeapi.cadastrar_Veiculos.domain;
 import com.testeapi.cadastrar_Veiculos.domain.Marca;
 import jakarta.persistence.*;
 import lombok.*;
