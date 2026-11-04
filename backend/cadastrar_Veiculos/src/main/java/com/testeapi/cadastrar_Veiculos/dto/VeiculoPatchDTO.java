@@ -1,8 +1,6 @@
 package com.testeapi.cadastrar_Veiculos.dto;
+
 import lombok.*;
-public class VeiculoPatchDTO {
-
-
 
     @Getter
     @Setter
@@ -17,4 +15,4 @@ public class VeiculoPatchDTO {
         private String descricao;
         private Boolean vendido;
     }
-}
+
