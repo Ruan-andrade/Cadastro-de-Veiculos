@@ -16,7 +16,6 @@ public interface VeiculoRepository extends JpaRepository<Veiculo, Long> {
 
     // 2. Veículos cadastrados na última semana
     List<Veiculo> findByCreatedGreaterThanEqual(LocalDateTime dataLimite);
-
     // 3. Filtros simples suportados nativamente pelo Spring Data
     List<Veiculo> findByMarca(Marca marca);
     List<Veiculo> findByAno(Integer ano);

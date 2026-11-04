@@ -78,8 +78,8 @@ public class VeiculoController {
 
     // 8. GET /veiculos/semana -> Retorna carros registados na última semana
     @GetMapping("/semana")
-    public ResponseEntity<List<VeiculoResponseDTO>> listarSemana() {
-        List<VeiculoResponseDTO> recentes = veiculoService.listarUltimaSemana();
+    public ResponseEntity<Long> listarSemana() {
+        long recentes = veiculoService.listarUltimaSemana();
         return ResponseEntity.ok(recentes);
     }
 

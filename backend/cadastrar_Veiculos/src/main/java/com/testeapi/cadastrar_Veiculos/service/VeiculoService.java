@@ -22,6 +22,6 @@ import java.util.List;
 
         RelatorioEstatisticasDTO gerarRelatorioEstatisticas();
 
-        List<VeiculoResponseDTO> listarUltimaSemana();
+        long listarUltimaSemana();
     }
 

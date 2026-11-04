@@ -153,12 +153,9 @@ public class VeiculoServiceImpl implements VeiculoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<VeiculoResponseDTO> listarUltimaSemana() {
+    public long listarUltimaSemana() {
         LocalDateTime seteDiasAtras = LocalDateTime.now().minusDays(7);
-        return veiculoRepository.findByCreatedGreaterThanEqual(seteDiasAtras)
-                .stream()
-                .map(VeiculoResponseDTO::fromEntity)
-                .collect(Collectors.toList());
+        return veiculoRepository.findByCreatedGreaterThanEqual(seteDiasAtras).size();
     }
 
     private Veiculo buscarEntidadePorId(Long id) {
