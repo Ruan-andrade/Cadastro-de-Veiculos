@@ -1,8 +1,7 @@
 package com.testeapi.cadastrar_Veiculos.dto;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Getter
 @Setter

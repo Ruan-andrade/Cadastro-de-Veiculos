@@ -1,9 +1,8 @@
 package com.testeapi.cadastrar_Veiculos.domain;
-import com.testeapi.cadastrar_Veiculos.domain.Marca;
-import jakarta.persistence.*;
-import lombok.*;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Table(name = "tb_veiculos")
@@ -28,13 +27,17 @@ public class Veiculo {
     @Column(nullable = false)
     private Integer ano;
 
+    @Column(length = 50)
+    private String cor;
+
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @Column(nullable = false)
     private Boolean vendido;
 
-    @Setter(AccessLevel.NONE) // Bloqueia o setCreated para ninguém alterar a data de criação manualmente
+    @Setter(AccessLevel.NONE) // Bloqueia o setCreated para ninguém alterar a data de criação
+    // manualmente
     @Column(nullable = false, updatable = false)
     private LocalDateTime created;
 

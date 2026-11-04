@@ -6,17 +6,20 @@ import com.testeapi.cadastrar_Veiculos.dto.RelatorioEstatisticasDTO;
 import com.testeapi.cadastrar_Veiculos.dto.VeiculoPatchDTO;
 import com.testeapi.cadastrar_Veiculos.dto.VeiculoRequestDTO;
 import com.testeapi.cadastrar_Veiculos.dto.VeiculoResponseDTO;
+import com.testeapi.cadastrar_Veiculos.exception.ResourceNotFoundException;
 import com.testeapi.cadastrar_Veiculos.repository.VeiculoRepository;
 import com.testeapi.cadastrar_Veiculos.service.VeiculoService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import jakarta.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,37 +32,26 @@ public class VeiculoServiceImpl implements VeiculoService {
     public VeiculoResponseDTO criar(VeiculoRequestDTO request) {
         Marca marcaValida = Marca.converterDeTexto(request.getMarca());
 
-        Veiculo veiculo = Veiculo.builder()
-                .veiculo(request.getVeiculo())
-                .marca(marcaValida)
-                .ano(request.getAno())
-                .descricao(request.getDescricao())
-                .vendido(request.getVendido() != null && request.getVendido())
-                .build();
+        Veiculo veiculo =
+                Veiculo.builder()
+                        .veiculo(request.getVeiculo())
+                        .marca(marcaValida)
+                        .ano(request.getAno())
+                        .cor(request.getCor())
+                        .descricao(request.getDescricao())
+                        .vendido(request.getVendido() != null && request.getVendido())
+                        .build();
 
         return VeiculoResponseDTO.fromEntity(veiculoRepository.save(veiculo));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<VeiculoResponseDTO> listarTodos(String marcaTexto, Integer ano) {
-        List<Veiculo> lista;
+    public List<VeiculoResponseDTO> listarTodos(String marcaTexto, Integer ano, String cor) {
+        Specification<Veiculo> spec = criarFiltro(marcaTexto, ano, cor);
+        List<Veiculo> veiculos = veiculoRepository.findAll(spec);
 
-        if (marcaTexto != null && !marcaTexto.isBlank() && ano != null) {
-            Marca marca = Marca.converterDeTexto(marcaTexto);
-            lista = veiculoRepository.findByMarcaAndAno(marca, ano);
-        } else if (marcaTexto != null && !marcaTexto.isBlank()) {
-            Marca marca = Marca.converterDeTexto(marcaTexto);
-            lista = veiculoRepository.findByMarca(marca);
-        } else if (ano != null) {
-            lista = veiculoRepository.findByAno(ano);
-        } else {
-            lista = veiculoRepository.findAll();
-        }
-
-        return lista.stream()
-                .map(VeiculoResponseDTO::fromEntity)
-                .collect(Collectors.toList());
+        return veiculos.stream().map(VeiculoResponseDTO::fromEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -78,6 +70,7 @@ public class VeiculoServiceImpl implements VeiculoService {
         veiculo.setVeiculo(request.getVeiculo());
         veiculo.setMarca(marcaValida);
         veiculo.setAno(request.getAno());
+        veiculo.setCor(request.getCor());
         veiculo.setDescricao(request.getDescricao());
         veiculo.setVendido(request.getVendido() != null ? request.getVendido() : false);
 
@@ -97,6 +90,9 @@ public class VeiculoServiceImpl implements VeiculoService {
         }
         if (patch.getAno() != null) {
             veiculo.setAno(patch.getAno());
+        }
+        if (patch.getCor() != null && !patch.getCor().isBlank()) {
+            veiculo.setCor(patch.getCor());
         }
         if (patch.getDescricao() != null) {
             veiculo.setDescricao(patch.getDescricao());
@@ -120,28 +116,37 @@ public class VeiculoServiceImpl implements VeiculoService {
     public RelatorioEstatisticasDTO gerarRelatorioEstatisticas() {
         List<Veiculo> todos = veiculoRepository.findAll();
 
-        long naoVendidos = todos.stream().filter(v -> !v.getVendido()).count();
+        long naoVendidos = todos.stream().filter(v -> Boolean.FALSE.equals(v.getVendido())).count();
 
         // Distribuição por década (ex: 1995 -> Década 1990)
-        Map<String, Long> decadas = todos.stream()
-                .collect(Collectors.groupingBy(
-                        v -> "Década " + ((v.getAno() / 10) * 10),
-                        LinkedHashMap::new,
-                        Collectors.counting()
-                ));
+        Map<String, Long> decadas =
+                todos.stream()
+                        .filter(v -> v.getAno() != null)
+                        .collect(
+                                Collectors.groupingBy(
+                                        v -> "Década " + ((v.getAno() / 10) * 10),
+                                        LinkedHashMap::new,
+                                        Collectors.counting()));
 
         // Distribuição por fabricante
-        Map<String, Long> fabricantes = todos.stream()
-                .collect(Collectors.groupingBy(
-                        v -> v.getMarca().getNomeExibicao(),
-                        LinkedHashMap::new,
-                        Collectors.counting()
-                ));
+        Map<String, Long> fabricantes =
+                todos.stream()
+                        .filter(v -> v.getMarca() != null)
+                        .collect(
+                                Collectors.groupingBy(
+                                        v -> v.getMarca().getNomeExibicao(),
+                                        LinkedHashMap::new,
+                                        Collectors.counting()));
 
         LocalDateTime seteDiasAtras = LocalDateTime.now().minusDays(7);
-        long totalUltimaSemana = todos.stream()
-                .filter(v -> v.getCreated().isAfter(seteDiasAtras))
-                .count();
+        long totalUltimaSemana =
+                todos.stream()
+                        .filter(
+                                v ->
+                                        v.getCreated() != null
+                                                && (v.getCreated().isEqual(seteDiasAtras)
+                                                        || v.getCreated().isAfter(seteDiasAtras)))
+                        .count();
 
         return RelatorioEstatisticasDTO.builder()
                 .totalNaoVendidos(naoVendidos)
@@ -153,14 +158,38 @@ public class VeiculoServiceImpl implements VeiculoService {
 
     @Override
     @Transactional(readOnly = true)
-    public long listarUltimaSemana() {
+    public List<VeiculoResponseDTO> listarCarrosUltimaSemana() {
         LocalDateTime seteDiasAtras = LocalDateTime.now().minusDays(7);
-        return veiculoRepository.findByCreatedGreaterThanEqual(seteDiasAtras).size();
+        return veiculoRepository.findByCreatedGreaterThanEqual(seteDiasAtras).stream()
+                .map(VeiculoResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     private Veiculo buscarEntidadePorId(Long id) {
-        return veiculoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado com o ID: " + id));
+        return veiculoRepository
+                .findById(id)
+                .orElseThrow(
+                        () ->
+                                new ResourceNotFoundException(
+                                        "Veículo não encontrado com o ID: " + id));
+    }
+
+    private Specification<Veiculo> criarFiltro(String marcaTexto, Integer ano, String cor) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (marcaTexto != null && !marcaTexto.isBlank()) {
+                Marca marca = Marca.converterDeTexto(marcaTexto);
+                predicates.add(cb.equal(root.get("marca"), marca));
+            }
+            if (ano != null) {
+                predicates.add(cb.equal(root.get("ano"), ano));
+            }
+            if (cor != null && !cor.isBlank()) {
+                predicates.add(cb.equal(cb.lower(root.get("cor")), cor.trim().toLowerCase()));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
     }
 }
-

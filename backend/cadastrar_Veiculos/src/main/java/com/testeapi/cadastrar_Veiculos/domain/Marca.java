@@ -1,9 +1,8 @@
 package com.testeapi.cadastrar_Veiculos.domain;
 
+import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
@@ -27,11 +26,17 @@ public enum Marca {
         }
 
         return Arrays.stream(Marca.values())
-                .filter(m -> m.name().equalsIgnoreCase(texto.trim())
-                        || m.getNomeExibicao().equalsIgnoreCase(texto.trim()))
+                .filter(
+                        m ->
+                                m.name().equalsIgnoreCase(texto.trim())
+                                        || m.getNomeExibicao().equalsIgnoreCase(texto.trim()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Marca inválida: '" + texto + "'. Marcas aceitas: " + Arrays.toString(Marca.values())
-                ));
+                .orElseThrow(
+                        () ->
+                                new IllegalArgumentException(
+                                        "Marca inválida: '"
+                                                + texto
+                                                + "'. Marcas aceitas: "
+                                                + Arrays.toString(Marca.values())));
     }
 }

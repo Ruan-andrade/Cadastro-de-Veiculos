@@ -22,10 +22,10 @@
     </properties>
 
     <dependencies>
-        <!-- Web MVC (API REST JSON) -->
+        <!-- Web MVC (API REST JSON + Tomcat embutido + Jackson) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- Validação de DTOs (@NotBlank, @NotNull, etc.) -->
@@ -67,15 +67,15 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Testes WebMVC e JPA -->
+        <!-- Testes Completos (JUnit 5, Mockito, MockMvc, AssertJ) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

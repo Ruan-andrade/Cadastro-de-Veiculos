@@ -1,8 +1,7 @@
 package com.testeapi.cadastrar_Veiculos.dto;
 
-import lombok.*;
-
 import java.util.Map;
+import lombok.*;
 
 @Getter
 @Setter
@@ -16,4 +15,3 @@ public class RelatorioEstatisticasDTO {
     private Map<String, Long> distribuicaoPorFabricante;
     private long totalUltimaSemana;
 }
-
