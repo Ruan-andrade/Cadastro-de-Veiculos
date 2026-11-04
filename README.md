@@ -31,6 +31,23 @@ A aplicação gerencia todo o ciclo de vida de veículos, com validação estrit
 
 ---
 
+## 🖥️ Front-end (Single Page Application — SPA)
+
+O projeto conta com uma interface moderna em **Single Page Application** desenvolvida com HTML5, Tailwind CSS e Vanilla JavaScript (ES6+), localizada na pasta `frontend/` e também embutida diretamente nos recursos estáticos do Spring Boot:
+
+* **Acesso Direto:** Basta iniciar a aplicação Spring Boot e acessar **`http://localhost:8080`** no navegador.
+* **Dashboard Interativo em Tempo Real:**
+  * Cards com contadores de estoque disponível, negociados, total no catálogo e veículos da última semana.
+  * Barras analíticas com percentual de distribuição por décadas e contadores por fabricantes oficiais.
+* **Operações Completas (CRUD RESTful):**
+  * **POST:** Cadastro via modal intuitivo com seleção de marcas oficiais.
+  * **GET:** Listagem dinâmica com filtros por marca, ano e cor.
+  * **PUT:** Edição completa de todos os dados do veículo.
+  * **PATCH:** Alternância rápida do status de venda com um clique na badge.
+  * **DELETE:** Exclusão segura com modal de confirmação.
+
+---
+
 ## 🏗️ Arquitetura e Padrões de Projeto
 
 O projeto segue os princípios da **Arquitetura em Camadas (Layered Architecture)**, separando rigorosamente as responsabilidades:

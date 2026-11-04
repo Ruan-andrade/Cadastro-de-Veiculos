@@ -1,0 +1,19 @@
+# Binários e Pacotes
+target/
+*.jar
+*.war
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+*.pdf
+
+# IDEs e Editores
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Materiais de estudo e anotações pessoais
+*guia*
+*GUIA*
